@@ -24,6 +24,7 @@ class Metric(models.Model):
 class Host(models.Model):
     """A host that reports to the MonitorLizard system"""
     guid = models.UUIDField()
+    tags = models.ManyToManyField('HostTag')
 
     class Meta:
         indexes = [
@@ -31,7 +32,7 @@ class Host(models.Model):
         ]
 
 
-class HostTags(models.Model):
+class HostTag(models.Model):
     """A collection of hosts"""
     hosts = models.ManyToManyField(Host)
     name = models.TextField()
@@ -55,3 +56,30 @@ class Report(models.Model):
         indexes = [
             models.Index(fields=['time']),
         ]
+
+class Team(models.Model):
+    """A group of users"""
+    name = models.TextField()
+    user = models.ManyToManyField('User')
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
+class User(models.Model):
+    """Users who receive notifications"""
+    name = models.TextField()
+    notification_email = models.EmailField(null=True, blank=True)
+    notification_phone = models.CharField(null=True, blank=True)
+    teams = models.ManyToManyField(Team)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+    
+    
+    
+    
+    
