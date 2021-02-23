@@ -48,8 +48,8 @@ class HostTag(models.Model):
 class Report(models.Model):
     """A report from a host containing the value of a specific metric"""
     time = models.DateTimeField()
-    metric = models.ForeignKey(Metric, on_delete=models.SET_NULL)
-    host = models.ForeignKey(Host, on_delete=models.SET_NULL)
+    metric = models.ForeignKey(Metric, on_delete=models.SET_NULL, null=True)
+    host = models.ForeignKey(Host, on_delete=models.SET_NULL, null=True)
     value = models.JSONField()
 
     class Meta:
@@ -57,29 +57,26 @@ class Report(models.Model):
             models.Index(fields=['time']),
         ]
 
+
 class Team(models.Model):
     """A group of users"""
     name = models.TextField()
-    user = models.ManyToManyField('User')
-    
+    users = models.ManyToManyField('User')
+
     class Meta:
         indexes = [
             models.Index(fields=['name']),
         ]
 
+
 class User(models.Model):
     """Users who receive notifications"""
     name = models.TextField()
     notification_email = models.EmailField(null=True, blank=True)
-    notification_phone = models.CharField(null=True, blank=True)
+    notification_phone = models.CharField(max_length=20, null=True, blank=True)
     teams = models.ManyToManyField(Team)
-    
+
     class Meta:
         indexes = [
             models.Index(fields=['name']),
         ]
-    
-    
-    
-    
-    
