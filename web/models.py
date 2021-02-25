@@ -48,7 +48,7 @@ class HostTag(models.Model):
 class Report(models.Model):
     """A report from a host containing the value of a specific metric"""
     time = models.DateTimeField(auto_now=True)
-    metric = models.ForeignKey(Metric, on_delete=models.PROTECT)
+    metric = models.ForeignKey(Metric, on_delete=models.SET_NULL, null=True)
     host = models.ForeignKey(Host, on_delete=models.SET_NULL, null=True)
     value = models.JSONField()
 
@@ -89,11 +89,13 @@ class AlertRule(models.Model):
         ('max', 'Maximum'),
     )
     # Host Tag to be watched for the alert
-    host_tag = models.ForeignKey(HostTag, on_delete=models.CASCADE)
+    host_tag = models.ForeignKey(HostTag, on_delete=models.SET_NULL, null=True)
+
     # Team to be notified of alert
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True)
+
     # Metric to watch
-    metric = models.ForeignKey(Metric, on_delete=models.PROTECT)
+    metric = models.ForeignKey(Metric, on_delete=models.SET_NULL, null=True)
     threshold = models.JSONField()
     operator = models.TextField(choices=ALERT_OPERANDS)
     severity = models.PositiveSmallIntegerField('Alert Severity (0 highest)')
@@ -101,28 +103,36 @@ class AlertRule(models.Model):
 
 class Alert(models.Model):
     """Alerts that have been thrown"""
-    time = models.DateTimeField(auto_now=True)
+
     # Alert rule that threw this alert
     alert_rule = models.ForeignKey(
         AlertRule, on_delete=models.SET_NULL, null=True)
+
     # Save properties of alert rule, in case it changes or is deleted
-    host_tag = models.ForeignKey(HostTag, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    metric = models.ForeignKey(Metric, on_delete=models.PROTECT)
+    host_tag = models.ForeignKey(HostTag, on_delete=models.SET_NULL, null=True)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True)
+    metric = models.ForeignKey(Metric, on_delete=models.SET_NULL, null=True)
     threshold = models.JSONField()
     operator = models.TextField(choices=AlertRule.ALERT_OPERANDS)
 
     # Report that tripped this alert
     report = models.ForeignKey(Report, on_delete=models.SET_NULL, null=True)
+
     # Save properties of report, for when it's deleted
     time = models.DateTimeField(auto_now=True)
     host = models.ForeignKey(Host, on_delete=models.SET_NULL, null=True)
     value = models.JSONField()
 
-    # Team to be notified of alert
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    notes = models.TextField()
-    acknowledged_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    notes = models.TextField(null=True, blank=True)
+    acknowledged_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    @classmethod
+    def create(cls, alert_rule=None, report=None, notes=None):
+        assert alert_rule is not None and report is not None and notes is not None
+        alert = cls(alert_rule=alert_rule, host_tag=alert_rule.host_tag, team=alert_rule.team, metric=alert_rule.metric, threshold=alert_rule.threshold,
+                    operator=alert_rule.operator, report=report, time=report.time, host=report.host, value=report.value, notes=notes)
+        return alert
 
     class Meta:
         indexes = [
