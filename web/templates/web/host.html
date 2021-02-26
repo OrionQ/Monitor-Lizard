@@ -1,0 +1,87 @@
+{% extends 'web/main.html' %}
+
+{% block content %}
+
+<br>
+
+<div style = "position:absolute; left:33px; top:95px;">
+	<div class="row"><h3>Host: slac.ncsu.edu</h3></div>
+</div>
+
+<br>
+
+
+{% include 'web/status.html' %}
+
+<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Running Processes</h5>
+		</div>
+		<button type="button" class="btn btn-info">More Details</button>
+		<div class="card card-body">
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Status</th>
+					<th>Uptime</th>
+					<th>CPU</th>
+					<th>Memory</th>
+				</tr>
+				<tr>
+					<td>monit</td>
+					<td>Running</td>
+					<td>4 Days</td>
+					<td>0.1%</td>
+					<td>1.3%</td>
+				</tr>
+				<tr>
+					<td>sshd</td>
+					<td>Running</td>
+					<td>4 days</td>
+					<td>0.1%</td>
+					<td>2.7%</td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Containers</h5>
+			
+		</div>
+		<button type="button" class="btn btn-info">More Details</button>
+		<div class="card card-body">
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Status</th>
+					<th>Uptime</th>
+					<th>CPU</th>
+					<th>Memory</th>
+				</tr>
+				<tr>
+					<td>test</td>
+					<td>Running</td>
+					<td>4 Days</td>
+					<td>0.0%</td>
+					<td>0.5%</td>
+				</tr>
+				<tr>
+					<td>test-1</td>
+					<td>Running</td>
+					<td>4 Days</td>
+					<td>0.1%</td>
+					<td>0.6%</td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+</div>
+
+<br>
+
+{% endblock %}

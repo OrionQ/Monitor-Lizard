@@ -1,0 +1,84 @@
+{% extends 'web/main.html' %}
+
+{% block content %}
+
+<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Alerts by Tag</h5>
+		</div>
+		<div class="card card-body">
+			<h7>Pi Chart</h7>
+		</div>
+	</div>	
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Events Over Time</h5>
+			
+		</div>
+		<div class="card card-body">
+			<h7>Chart</h7>
+		</div>
+	</div>	
+</div>
+
+<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Recent Alerts</h5>
+		</div>
+		<div class="card card-body">
+			<table class="table">
+				<tr>
+					<th>Time</th>
+					<th>Details</th>
+				</tr>
+				<tr>
+					<td>2/23/2021 12:18PM</td>
+					<td>Lorem Ipsum</td>
+				</tr>
+				<tr style="background-color:#F0E68C">
+					<td>2/23/2021 12:20PM</td>
+					<td>Active Lorem Ipsum</td>
+				</tr>
+				<tr>
+					<td>2/23/2021 12:22PM</td>
+					<td>Lorem Ipsum</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Host Tags</h5>
+			
+		</div>
+		<div class="card card-body">
+			<table class="table">
+				<tr>
+					<th>Tag</th>
+					<th>Summary</th>
+					<th>Details</th>
+				</tr>
+				<tr>
+					<td>cluster_prod-us-east-1-virginia</td>
+					<td>Disk Warning</td>
+					<td><button type="button" class="btn btn-info">Report</button></td>
+				</tr>
+				<tr>
+					<td>cluster_prod-us-backend-01</td>
+					<td>Monitored</td>
+					<td><button type="button" class="btn btn-info">Report</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+</div>
+
+{% endblock %}
