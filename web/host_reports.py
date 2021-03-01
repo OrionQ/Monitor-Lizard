@@ -29,8 +29,8 @@ class HostReport:
         Report.objects.bulk_create(reports)
 
 
-class BasicReport(HostReport):
-    """A basic report that just sends cpu usage and temp. Basically an example report"""
+class HourlyReport(HostReport):
+    """A report to be sent by every host every hour. Currently only contains cpu_usage and cpu_temperature"""
 
     def __init__(self, guid=None, cpu_usage=None, cpu_temperature=None):
         HostReport.__init__(self, guid, {
