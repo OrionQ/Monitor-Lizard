@@ -1,6 +1,10 @@
 from .models import Report, Metric, Host
 
-# All of the reports a host may want to send
+# The base class host report
+# To make a new report:
+# 1) Make a class that extends HostReport
+# 2) Put it in host_reports/
+# 3) Put it in web.management.commands.host_daemon.Command.reports
 
 
 class HostReport:
@@ -8,17 +12,20 @@ class HostReport:
     A report sent from the host daemon to the processing daemon over the message queue.
     .guid = the guid of the host that sent the report
     .metrics = a dict of metrics that host has, keyed by metric name
+    .polling_interval = how often the report should be sent, in seconds
     """
+
+    polling_interval = None
 
     def __init__(self, guid=None, metrics=[]):
         assert guid is not None
         self.guid = guid
         self.metrics = metrics
 
-    def persist(self):
+    def generate_report_models(self):
         """
-        Generate report models from this report and save to the db.
-        Only use this once the report is on the processing daemon!
+        Generate multiple report models from this report.
+        To be used once the report is on the processing daemon!
         """
 
         reports = []
@@ -26,14 +33,4 @@ class HostReport:
         for metric, value in self.metrics:
             reports.append(Report(metric=Metric.objects.get(
                 name=metric), host=host, value=value))
-        Report.objects.bulk_create(reports)
-
-
-class HourlyReport(HostReport):
-    """A report to be sent by every host every hour. Currently only contains cpu_usage and cpu_temperature"""
-
-    def __init__(self, guid=None, cpu_usage=None, cpu_temperature=None):
-        HostReport.__init__(self, guid, {
-            'CPU Usage': cpu_usage,
-            'CPU Temp': cpu_temperature,
-        })
+        return reports
