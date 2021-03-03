@@ -40,3 +40,11 @@ def tag(request):
 @login_required(login_url='login')
 def host(request):
     return render(request, 'web/host.html')
+
+@login_required(login_url='login')
+def containers(request):
+    return render(request, 'web/containers.html')
+
+@login_required(login_url='login')
+def processes(request):
+    return render(request, 'web/processes.html')
