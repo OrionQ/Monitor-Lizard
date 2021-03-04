@@ -2,28 +2,28 @@ from .models import Report, Metric, Host
 import configparser
 import time
 
-# The base class host report
-# To make a new report:
-# 1) Make a file in host_reports/
-# 2) Make a class that extends HostReport
+# The base class host plugin
+# To make a new host plugin:
+# 1) Make a file in host_plugins/
+# 2) Make a class that extends HostPlugin
 # 3) Populate _probes with the probes you want
 
 
-class HostReport:
+class HostPlugin:
     """
-    A report sent from the host daemon to the processing daemon over the message queue.
+    Generates sent from the host daemon to the processing daemon over the message queue from a list of probes
     .guid = the guid of the host that sent the report
     ._probes = a list of probes this report can send
     .metrics = a dict of metrics that report will send, keyed by metric name
     """
     _probes = []
+    HOST_PLUGIN_CONFIG_FILE = 'host_plugin_config.ini'
 
     def __init__(self, guid=None):
         assert guid is not None
         self.guid = guid
         self.metrics = {}
         polling_config = self.get_metric_polling_config()
-        print(polling_config)
 
         for probe in self._probes:
             if (self.should_send(polling_config, probe)):
@@ -35,7 +35,7 @@ class HostReport:
 
     def generate_report_models(self):
         """
-        Generate multiple report models from this report.
+        Generate multiple report models from this plugin.
         To be used once the report is on the processing daemon!
         """
 
@@ -48,7 +48,7 @@ class HostReport:
 
     def get_metric_polling_config(self):
         config = configparser.ConfigParser()
-        config.read('host_report_config.ini')
+        config.read(self.HOST_PLUGIN_CONFIG_FILE)
         if not config.has_section('last_poll'):
             config.add_section('last_poll')
         if not config.has_section('polling_intervals'):
@@ -56,7 +56,7 @@ class HostReport:
         return config
 
     def save_metric_polling_config(self, config):
-        with open('host_report_config.ini', 'w') as configfile:
+        with open(self.HOST_PLUGIN_CONFIG_FILE, 'w') as configfile:
             config.write(configfile)
 
     def should_send(self, polling_config, probe):
@@ -66,8 +66,8 @@ class HostReport:
 # The probe base class
 # To make a new probe:
 # 0) Make sure there exists a cooresponding metric
-# 1) Make a new Report to put it on (see above) or choose an existing report
-# 2) Define a name (must be unique) and default_polling_interval
+# 1) Make a new HostPlugin to put it on (see above) or choose an existing report
+# 2) Define a name (must be unique and match metric) and default_polling_interval
 # 3) Define the measure method. The measure method will only actually run when the probe is polled for data
 
 

@@ -3,4 +3,4 @@
 *.pyc
 __pycache__
 *.sqlite3
-host_report_config.ini
+host_plugin_config.ini

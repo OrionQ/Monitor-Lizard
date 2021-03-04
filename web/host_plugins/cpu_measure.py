@@ -1,4 +1,4 @@
-from web.host_report import HostReport, Probe
+from web.host_plugin import HostPlugin, Probe
 
 # Measurements of the cpu to be sent
 
@@ -19,7 +19,7 @@ class CpuTemperature(Probe):
         return 60
 
 
-class Report(HostReport):
+class ProbePlugin(HostPlugin):
     _probes = [
         CpuUsage,
         CpuTemperature,
