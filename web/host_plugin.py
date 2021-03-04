@@ -1,6 +1,4 @@
-from .models import Report, Metric, Host
-import configparser
-import time
+from time import time
 
 # The base class host plugin
 # To make a new host plugin:
@@ -11,57 +9,29 @@ import time
 
 class HostPlugin:
     """
-    Generates sent from the host daemon to the processing daemon over the message queue from a list of probes
+    Measure probes that should be measured
     .guid = the guid of the host that sent the report
     ._probes = a list of probes this report can send
     .metrics = a dict of metrics that report will send, keyed by metric name
     """
     _probes = []
-    HOST_PLUGIN_CONFIG_FILE = 'host_plugin_config.ini'
 
-    def __init__(self, guid=None):
-        assert guid is not None
-        self.guid = guid
-        self.metrics = {}
-        polling_config = self.get_metric_polling_config()
+    def measure(self, last_polls=None, polling_config=None):
+        assert last_polls is not None and polling_config is not None
+        metrics = {}
 
         for probe in self._probes:
-            if (self.should_send(polling_config, probe)):
-                probe = probe()
-                self.metrics[probe.name] = probe.measure()
-                polling_config.set('last_poll', probe.name, str(time.time()))
+            probe = probe()
+            if (self.probe_should_send(probe, polling_config, last_polls)):
+                metrics[probe.name] = probe.measure()
+                last_polls[probe.name] = time()
 
-        self.save_metric_polling_config(polling_config)
+        return metrics
 
-    def generate_report_models(self):
-        """
-        Generate multiple report models from this plugin.
-        To be used once the report is on the processing daemon!
-        """
-
-        reports = []
-        host = Host.objects.get(guid=self.guid)
-        for metric, value in self.metrics:
-            reports.append(Report(metric=Metric.objects.get(
-                name=metric), host=host, value=value))
-        return reports
-
-    def get_metric_polling_config(self):
-        config = configparser.ConfigParser()
-        config.read(self.HOST_PLUGIN_CONFIG_FILE)
-        if not config.has_section('last_poll'):
-            config.add_section('last_poll')
-        if not config.has_section('polling_intervals'):
-            config.add_section('polling_intervals')
-        return config
-
-    def save_metric_polling_config(self, config):
-        with open(self.HOST_PLUGIN_CONFIG_FILE, 'w') as configfile:
-            config.write(configfile)
-
-    def should_send(self, polling_config, probe):
+    def probe_should_send(self, probe, polling_config, last_polls):
         """Calculate whether the report should poll the corresponding metric, according to its data in the polling_config"""
         return True
+
 
 # The probe base class
 # To make a new probe:
