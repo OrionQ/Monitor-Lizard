@@ -1,3 +1,4 @@
+import psutil
 from web.host_plugin import HostPlugin, Probe
 
 # Measurements of the cpu to be sent
@@ -9,7 +10,7 @@ class CpuUsage(Probe):
 
     @staticmethod
     def measure():
-        return 60
+        return psutil.cpu_percent()
 
 
 class CpuTemperature(Probe):
