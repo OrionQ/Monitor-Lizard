@@ -8,6 +8,7 @@ from configparser import ConfigParser
 from json import JSONEncoder, dumps
 import logging
 from web.models import Report, Metric, Host
+from web.message_queue import MessageQueue
 from django.core.management.base import BaseCommand
 
 # Send reports to the server from the host.
@@ -79,7 +80,7 @@ class Command(BaseCommand):
 
     def send(self, report):
         """Replace this with pika serializing and sending the report over json"""
-        print(dumps(report, cls=HostReportEncoder))
+        print()
 
     def get_metric_polling_config(self):
         config = ConfigParser()
@@ -110,6 +111,7 @@ class Command(BaseCommand):
         polling_config = self.get_metric_polling_config()
         # Dictionary of probe name to last poll time
         last_polls = {}
+        queue = MessageQueue()
 
         while True:
             report = HostReport(guid)
@@ -121,5 +123,5 @@ class Command(BaseCommand):
                     probePlugin.measure(last_polls, polling_config))
             # Only send nonempty reports
             if report.should_send():
-                self.send(report)
+                queue.send(dumps(report, cls=HostReportEncoder))
             sleep(1)
