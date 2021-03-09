@@ -112,15 +112,15 @@ class Command(BaseCommand):
         # Dictionary of probe name to last poll time
         last_polls = {}
         queue = MessageQueue()
+        plugins = self.probePlugins()
 
         while True:
             report = HostReport(guid)
-            # Look through all plugins for probes for all metrics that might be due
-            for probePlugin in self.probePlugins():
-                probePlugin = probePlugin()
-                # Append all metrics the plugin measures to our report
+            # Look through probes for metrics that might be due
+            for plugin in plugins:
+                # Append all metrics the probe plugin measures to our report
                 report.metrics.update(
-                    probePlugin.measure(last_polls, polling_config))
+                    plugin.measure(last_polls, polling_config))
             # Only send nonempty reports
             if report.should_send():
                 queue.send(dumps(report, cls=HostReportEncoder))

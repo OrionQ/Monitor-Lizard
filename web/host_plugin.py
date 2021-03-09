@@ -10,25 +10,24 @@ from time import time
 class HostPlugin:
     """
     Measure probes that should be measured
-    .guid = the guid of the host that sent the report
     ._probes = a list of probes this report can send
-    .metrics = a dict of metrics that report will send, keyed by metric name
     """
     _probes = []
 
-    def measure(self, last_polls=None, polling_config=None):
+    @classmethod
+    def measure(cls, last_polls=None, polling_config=None):
         assert last_polls is not None and polling_config is not None
         metrics = {}
 
-        for probe in self._probes:
-            probe = probe()
-            if (self.probe_should_send(probe, polling_config, last_polls)):
+        for probe in cls._probes:
+            if (cls.probe_should_send(probe, polling_config, last_polls)):
                 metrics[probe.name] = probe.measure()
                 last_polls[probe.name] = time()
 
         return metrics
 
-    def probe_should_send(self, probe, polling_config, last_polls):
+    @staticmethod
+    def probe_should_send(probe, polling_config, last_polls):
         """Calculate whether the report should poll the corresponding metric, according to its data in the polling_config"""
         return True
 
@@ -45,5 +44,6 @@ class Probe:
     name = None
     default_polling_interval = None
 
-    def measure(self):
+    @staticmethod
+    def measure():
         return None

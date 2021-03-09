@@ -31,7 +31,6 @@ class Command(BaseCommand):
     def on_message(self, ch, method, properties, body):
         """Upon receiving a message over the message queue, decode it into a report and, if we've received enough reports, save it"""
         report = loads(body.decode(), cls=HostReportDecoder)
-        print(report)
         self.reports.extend(report.generate_report_models())
         if (self.reports.count > 100):
             Report.objects.bulk_create(self.reports)
