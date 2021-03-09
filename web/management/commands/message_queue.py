@@ -16,34 +16,29 @@ class MessageQueue:
     def __init__(self, message):
         self.ip = 'localhost'
         self.message = message
+        
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.ip))
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue='default')
     
     def send(self, message):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(self.ip))
-        channel = connection.channel()
         
         #message = ' '.join(sys.argv[1:]) or "Default Message"
         
-        channel.queue_declare(queue='default')
-        
-        channel.basic_publish(exchange='',routing_key='default',body=message)
+        self.channel.basic_publish(exchange='',routing_key='default',body=message)
         print(" [x] Sent '" + message + "'")
         
-        connection.close()
+        self.connection.close()
 
     def receive(self, message):
-        try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(self.ip))
-            channel = connection.channel()
-        
-            channel.queue_declare(queue='default')
-        
+        try:        
             def callback(ch, method, properties, body):
                 print(" [x] Received %r" % body.decode())
             
-            channel.basic_consume(queue='default',auto_ack=True,on_message_callback=callback)
+            self.channel.basic_consume(queue='default',auto_ack=True,on_message_callback=callback)
             
             print(' [*] Waiting for messages. To exit press CTRL+C')
-            channel.start_consuming()
+            self.channel.start_consuming()
         except KeyboardInterrupt:
             print('Interrupted')
             try:
