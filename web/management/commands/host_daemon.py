@@ -1,5 +1,6 @@
 
 import json
+import re
 from os import path
 from glob import glob
 from time import sleep
@@ -64,7 +65,15 @@ class Command(BaseCommand):
     def is_registered(self):
         """If we have initialized and registered our commands yet"""
         # The implementation should check the existence of GUID_FILE, then check the existence of a guid in that file
-        return True
+        if path.exists(self.GUID_FILE):
+            with open(self.GUID_FILE) as fp:
+                guid = fp.readline().strip()
+                regex = "^[{]?[0-9a-fA-F]{8}" + "-([0-9a-fA-F]{4}-)" + "{3}[0-9a-fA-F]{12}[}]?$"
+                p = re.compile(regex)
+                if(re.search(p, guid)):
+                    return True
+            
+        return False
 
     def register(self):
         """Register with the host server"""
@@ -76,7 +85,9 @@ class Command(BaseCommand):
 
     def load_guid(self):
         """Load the guid of the host from GUID_FILE"""
-        return "4530ad55-0c68-4b78-97d8-f5664defb316"
+        with open(self.GUID_FILE) as fp:
+                guid = fp.readline().strip()
+        return guid
 
     def send(self, report):
         """Replace this with pika serializing and sending the report over json"""
