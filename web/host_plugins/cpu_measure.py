@@ -5,7 +5,9 @@ from web.host_plugin import HostPlugin, Probe
 
 
 class CpuUsage(Probe):
+    category = 'cpu'
     name = 'cpu_usage'
+    metric_type = 'Integer'
     default_polling_interval = 60*60
 
     @staticmethod
@@ -14,7 +16,9 @@ class CpuUsage(Probe):
 
 
 class CpuTemperature(Probe):
+    category = 'cpu'
     name = 'cpu_temperature'
+    metric_type = 'Floating point'
     default_polling_interval = 60*60
 
     @staticmethod

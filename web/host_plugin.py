@@ -1,4 +1,5 @@
 from time import time
+from .models import Metric
 
 # The base class host plugin
 # To make a new host plugin:
@@ -26,6 +27,13 @@ class HostPlugin:
 
         return metrics
 
+    @classmethod
+    def generate_metrics(cls):
+        metrics = []
+        for probe in cls._probes:
+            metrics.append(probe.generate_metric())
+        return metrics
+
     @staticmethod
     def probe_should_send(probe, polling_config, last_polls):
         """Calculate whether the report should poll the corresponding metric, according to its data in the polling_config"""
@@ -41,9 +49,17 @@ class HostPlugin:
 
 
 class Probe:
+    category = None
     name = None
+    metric_type = None
+    description = None
     default_polling_interval = None
 
     @staticmethod
     def measure():
         return None
+
+    @classmethod
+    def generate_metric(cls):
+        assert cls.category is not None and cls.name is not None and cls.metric_type is not None
+        return Metric(category=cls.category, name=cls.name, metric_type=cls.metric_type, description=cls.description)
