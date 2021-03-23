@@ -34,7 +34,7 @@ class HostReport():
         reports = []
         try:
             host = Host.objects.get(guid=self.guid)
-            for metric, value in self.metrics:
+            for metric, value in self.metrics.items():
                 try:
                     reports.append(Report(metric=Metric.objects.get(
                         name=metric), host=host, value=value))
@@ -119,6 +119,7 @@ class Command(BaseCommand):
                 return 1
 
         guid = self.load_guid()
+        #guid = "8eb5fe61-877f-4321-83d5-c735dc715a67"
         polling_config = self.get_metric_polling_config()
         # Dictionary of probe name to last poll time
         last_polls = {}

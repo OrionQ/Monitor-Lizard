@@ -12,7 +12,7 @@ class DiskUsage(Probe):
 
     @staticmethod
     def measure():
-        return psutil.disk_usage()
+        return psutil.disk_usage('/').percent
 
 
 class ProbePlugin(HostPlugin):
