@@ -15,6 +15,9 @@ class Metric(models.Model):
     metric_type = models.TextField(choices=METRIC_TYPES)
     description = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Metric: {self.category} {self.name} (self.metric_type)"
+
     class Meta:
         indexes = [
             models.Index(fields=['category', 'name']),
@@ -26,6 +29,9 @@ class Host(models.Model):
     guid = models.UUIDField()
     tags = models.ManyToManyField('HostTag')
 
+    def __str__(self):
+        return f"Host: {self.guid}"
+
     class Meta:
         indexes = [
             models.Index(fields=['guid']),
@@ -34,9 +40,12 @@ class Host(models.Model):
 
 class HostTag(models.Model):
     """A collection of hosts"""
-    hosts = models.ManyToManyField(Host)
+    hosts = models.ManyToManyField(Host, blank=True)
     name = models.TextField()
     registration_key = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Host Tag: {self.name}"
 
     class Meta:
         indexes = [
@@ -52,6 +61,9 @@ class Report(models.Model):
     host = models.ForeignKey(Host, on_delete=models.SET_NULL, null=True)
     value = models.JSONField()
 
+    def __str__(self):
+        return f"{self.time} report of {self.metric.name} for {self.host.guid}"
+
     class Meta:
         indexes = [
             models.Index(fields=['time']),
@@ -62,6 +74,9 @@ class Team(models.Model):
     """A group of users"""
     name = models.TextField()
     users = models.ManyToManyField('User')
+
+    def __str__(self):
+        return f"Team: {self.name}"
 
     class Meta:
         indexes = [
@@ -74,7 +89,10 @@ class User(models.Model):
     name = models.TextField()
     notification_email = models.EmailField(null=True, blank=True)
     notification_phone = models.CharField(max_length=20, null=True, blank=True)
-    teams = models.ManyToManyField(Team)
+    teams = models.ManyToManyField(Team, blank=True)
+
+    def __str__(self):
+        return f"User: {self.name}"
 
     class Meta:
         indexes = [
@@ -99,6 +117,9 @@ class AlertRule(models.Model):
     threshold = models.JSONField()
     operator = models.TextField(choices=ALERT_OPERANDS)
     severity = models.PositiveSmallIntegerField('Alert Severity (0 highest)')
+
+    def __str__(self):
+        return f"Alert rule: {self.team.name} watching {self.metric.name} of {self.host_tag.name}"
 
 
 class Alert(models.Model):
@@ -126,6 +147,9 @@ class Alert(models.Model):
     notes = models.TextField(null=True, blank=True)
     acknowledged_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"Alert: {self.team.name} alerted about {self.metric.name} on {self.host.guid}"
 
     @classmethod
     def create(cls, alert_rule=None, report=None, notes=None):
