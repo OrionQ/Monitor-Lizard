@@ -11,6 +11,8 @@ import logging
 from web.models import Report, Metric, Host
 from web.message_queue import MessageQueue
 from django.core.management.base import BaseCommand
+from http import client
+from urllib.parse import urlencode
 
 # Send reports to the server from the host.
 
@@ -56,7 +58,7 @@ class Command(BaseCommand):
     help = 'To be run on the host. Will check every second to send all due metrics as report'
 
     # The file on each host where we keep our guid
-    GUID_FILE = "monitor_lizard_guid.json"
+    GUID_FILE = "monitor_lizard_guid.txt"
     # The file that should contain the registration key
     REGISTRATION_KEY_FILE = "monitor_lizard_registration.txt"
 
@@ -68,25 +70,36 @@ class Command(BaseCommand):
         if path.exists(self.GUID_FILE):
             with open(self.GUID_FILE) as fp:
                 guid = fp.readline().strip()
-                regex = "^[{]?[0-9a-fA-F]{8}" + "-([0-9a-fA-F]{4}-)" + "{3}[0-9a-fA-F]{12}[}]?$"
+                regex = "^[{]?[0-9a-fA-F]{8}" + \
+                    "-([0-9a-fA-F]{4}-)" + "{3}[0-9a-fA-F]{12}[}]?$"
                 p = re.compile(regex)
                 if(re.search(p, guid)):
                     return True
-            
+
         return False
 
     def register(self):
         """Register with the host server"""
-        # Should first check for the existence of REGISTRATION_KEY_FILE, and if it doesn't exist return false
-        # If it does exist then try to register via the registration route
-        # Once it has the guid, save that to the GUID_FILE
-        # If all that completes successfully, return true
+        conn = client.HTTPConnection("localhost:8000")
+        if path.exists(self.REGISTRATION_KEY_FILE):
+            with open(self.REGISTRATION_KEY_FILE) as fp:
+                registration_key = fp.readline().strip()
+            conn.request(
+                "POST", "/api/host/", urlencode({'registration_key': registration_key}))
+        else:
+            conn.request(
+                "POST", "/api/host/")
+        guid = json.loads(
+            conn.getresponse().read().decode('utf-8'))['guid']
+        conn.close()
+        with open(self.GUID_FILE, 'x') as fp:
+            fp.write(guid)
         return True
 
     def load_guid(self):
         """Load the guid of the host from GUID_FILE"""
         with open(self.GUID_FILE) as fp:
-                guid = fp.readline().strip()
+            guid = fp.readline().strip()
         return guid
 
     def send(self, report):
