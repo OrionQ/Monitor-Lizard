@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from web.controllers import views, host_endpoints
 
 urlpatterns = [
     path('login/', views.loginPage, name="login"),
