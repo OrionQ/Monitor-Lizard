@@ -33,13 +33,16 @@ def logoutUser(request):
 @login_required(login_url='login')
 def home(request):
     report_list = Report.objects.all()
+    tag_list = HostTag.objects.all()
+    for val in tag_list:
+        host_list = val.hosts.count()
 
     paginator = Paginator(report_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     # Returning a template
-    return render(request, 'web/dashboard.html', {'page_obj': page_obj})
+    return render(request, 'web/dashboard.html', {'page_obj': page_obj, 'tag_list': tag_list, 'host_list': host_list})
 
 @login_required(login_url='login')
 def tag(request):
