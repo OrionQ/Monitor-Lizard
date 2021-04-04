@@ -94,4 +94,51 @@
 	</div>	
 </div>
 
+<div class="row">
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Reports</h5>
+			
+		</div>
+		<div class="card card-body">
+			<table class="table">
+				<tr>
+					<th>Time</th>
+					<th>Host Name</th>
+					<th>Metric</th>
+					<th>Value</th>
+				</tr>
+				{% for report in page_obj %}
+					<tr>
+					<td>{{ report.time }}</td>
+					<td>{{ report.host.guid }}</td>
+					<td>{{ report.metric.name }}</td>
+					<td>{{ report.value }}</td>
+					</tr>
+				{% endfor %}
+
+				
+			</table>
+			<div class="pagination">
+				<span class="step-links">
+					{% if page_obj.has_previous %}
+						<a href="?page=1">&laquo; first</a>
+						<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+					{% endif %}
+			
+					<span class="current">
+						Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+					</span>
+			
+					{% if page_obj.has_next %}
+						<a href="?page={{ page_obj.next_page_number }}">next</a>
+						<a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+					{% endif %}
+				</span>
+			</div>
+		</div>
+	</div>	
+</div>
+
 {% endblock %}
