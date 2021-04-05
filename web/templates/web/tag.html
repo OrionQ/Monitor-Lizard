@@ -6,7 +6,7 @@
 <br>
 
 <div style = "position:absolute; left:33px; top:95px;">
-	<div class="row"><h3>Tag: cluster_prod-us-east-1-virginia</h3></div>
+	<div class="row"><h3>Tag: {{ tag_test }}</h3></div>
 </div>
 
 <br>
@@ -17,40 +17,24 @@
 			<table class="table">
 				<tr>
 					<th>Host</th>
-					<th>IP Address</th>
-					<th>Last Check</th>
-					<th>Status</th>
+					<th>Reports Generated</th>
+					<th>Last Checked</th>
+					<th>CPU Usage</th>
+					<th>Disk Usage</th>
+					<th>RAM Usage</th>
+					<th>CPU Temperature</th>
 				</tr>
-				<tr>
-					<td><span class="hello-msg"><a href="{% url 'host' %}">slac.ncsu.edu</a></span></td>
-					<td>192.168.00.00</td>
-					<td>02-23-2021 01:16:13</td>
-					<td>Active</td>
-				</tr>
-				<tr>
-					<td><span class="hello-msg"><a href="{% url 'host' %}">slac-1.ncsu.edu</a></span></td>
-					<td>192.168.00.01</td>
-					<td>02-23-2021 01:16:13</td>
-					<td>Active</td>
-				</tr>
-				<tr>
-					<td><span class="hello-msg"><a href="{% url 'host' %}">slac-2.ncsu.edu</a></span></td>
-					<td>192.168.00.02</td>
-					<td>02-23-2021 01:16:13</td>
-					<td>Not Active</td>
-				</tr>
-				<tr>
-					<td><span class="hello-msg"><a href="{% url 'host' %}">slac-3.ncsu.edu</a></span></td>
-					<td>192.168.00.03</td>
-					<td>02-23-2021 01:16:13</td>
-					<td>Active</td>
-				</tr>
-				<tr>
-					<td><span class="hello-msg"><a href="{% url 'host' %}">slac-4.ncsu.edu</a></span></td>
-					<td>192.168.00.04</td>
-					<td>02-23-2021 01:16:13</td>
-					<td>Active</td>
-				</tr>
+				{% for host in host_list %}
+					<tr>
+					<td><a href="{% url 'host' %}">{{ host.guid }}</a></td>
+					<td>{{ report_count }}</td>
+					<td>{{ last_timestamp }}</td>
+					<td>{{ cpu_usage }}</td>
+					<td>{{ disk_usage }}</td>
+					<td>{{ ram_usage }}</td>
+					<td>{{ cpu_temperature }}</td>
+					</tr>
+				{% endfor %}
 			</table>
 		</div>
 	</div>	

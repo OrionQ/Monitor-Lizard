@@ -45,8 +45,30 @@ def home(request):
     return render(request, 'web/dashboard.html', {'page_obj': page_obj, 'tag_list': tag_list, 'host_list': host_list})
 
 @login_required(login_url='login')
-def tag(request):
-    return render(request, 'web/tag.html')
+def tag(request, tag_test):
+    tag = HostTag.objects.get(name=tag_test)
+    host_list = tag.hosts.all()
+    for val in host_list:
+        report_list = Report.objects.filter(host=val)
+        report_count = report_list.count()
+        last_report = Report.objects.filter(host=val).last()
+        last_timestamp = last_report.time
+
+        last_four = Report.objects.filter(host=val)[:4]
+        times = []
+        for val in last_four:
+            # times.append(val.value)
+            if val.metric.name == 'ram_usage':
+                ram_usage = val.value
+            if val.metric.name == 'cpu_temperature':
+                cpu_temperature = val.value
+            if val.metric.name == 'disk_usage':
+                disk_usage = val.value
+            if val.metric.name == 'cpu_usage':
+                cpu_usage = val.value
+    return render(request, 'web/tag.html', {'host_list': host_list, 'report_count': report_count, 
+                    'last_timestamp': last_timestamp, 'tag_test': tag_test, 'ram_usage': ram_usage, 
+                    'cpu_usage': cpu_usage, 'disk_usage': disk_usage, 'cpu_temperature': cpu_temperature})
 
 @login_required(login_url='login')
 def host(request):

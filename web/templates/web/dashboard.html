@@ -71,8 +71,9 @@
 				</tr>
 				{% for tag in tag_list %}
 					<tr>
-					<td><a href="{% url 'tag' %}">{{ tag.name }}</a></td>
+					<td><a href="{% url 'tag' tag.name %}">{{ tag.name }}</a></td>
 					<td>{{ host_list }}</td>
+					<td>{{ tag.registration_key }}</td>
 					</tr>
 				{% endfor %}
 			</table>
