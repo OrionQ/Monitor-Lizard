@@ -28,4 +28,33 @@
 
 <br>
 
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table">
+				<tr>
+					<th>Last Checked</th>
+					<th>Highest RAM Usage</th>
+					<th>Lowest RAM Usage</th>
+					<th>Highest CPU Usage</th>
+					<th>Lowest CPU Usage</th>
+					<th>Highest Disk Usage</th>
+					<th>Lowest Disk Usage</th>
+					<th>Highest CPU Temperature</th>
+					<th>Lowest CPU Temperature</th>
+				</tr>
+					<td>{{ last_timestamp }}</td>
+					<td>{{ most_ram_usage }}</td>
+					<td>{{ least_ram_usage }}</td>
+					<td>{{ most_cpu_usage }}</td>
+					<td>{{ least_cpu_usage }}</td>
+					<td>{{ most_disk_usage }}</td>
+					<td>{{ least_disk_usage }}</td>
+					<td>{{ most_cpu_temperature }}</td>
+					<td>{{ least_cpu_temperature }}</td>
+			</table>
+		</div>
+	</div>	
+</div>
+
 {% endblock %}
