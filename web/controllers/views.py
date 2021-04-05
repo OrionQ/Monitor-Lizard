@@ -71,8 +71,9 @@ def tag(request, tag_test):
                     'cpu_usage': cpu_usage, 'disk_usage': disk_usage, 'cpu_temperature': cpu_temperature})
 
 @login_required(login_url='login')
-def host(request):
-    return render(request, 'web/host.html')
+def host(request, host_test):
+    host = Host.objects.get(guid=host_test)
+    return render(request, 'web/host.html', {'host_test': host_test})
 
 @login_required(login_url='login')
 def containers(request):

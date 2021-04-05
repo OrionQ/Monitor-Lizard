@@ -7,7 +7,7 @@ urlpatterns = [
     path('logout/', views.logoutUser, name="logout"),
     path('', views.home, name="home"),
     path('tag/<str:tag_test>/', views.tag, name="tag"),
-    path('host/', views.host, name="host"),
+    path('host/<str:host_test>/', views.host, name="host"),
     path('host/containers/', views.containers),
     path('host/processes/', views.processes),
 ]

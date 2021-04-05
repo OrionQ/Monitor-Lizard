@@ -26,7 +26,7 @@
 				</tr>
 				{% for host in host_list %}
 					<tr>
-					<td><a href="{% url 'host' %}">{{ host.guid }}</a></td>
+					<td><a href="{% url 'host' host.guid %}">{{ host.guid }}</a></td>
 					<td>{{ report_count }}</td>
 					<td>{{ last_timestamp }}</td>
 					<td>{{ cpu_usage }}</td>
