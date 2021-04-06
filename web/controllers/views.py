@@ -72,6 +72,12 @@ def tag(request, tag_test):
 def host(request, host_test):
     host = Host.objects.get(guid=host_test)
     last_four = Report.objects.filter(host__guid=host_test)[:4]
+    tags = HostTag.objects.all()
+    host_tags = []
+    for val in tags.all():
+        for host_val in val.hosts.all():
+            if str(host_val.guid) == host_test:
+                host_tags.append(val.name)
 
     last_report = Report.objects.filter(host__guid=host_test).last()
     last_timestamp = last_report.time
@@ -105,7 +111,7 @@ def host(request, host_test):
                                                 'last_timestamp': last_timestamp, 'least_cpu_usage': least_cpu_usage, 
                                                 'most_cpu_usage': most_cpu_usage, 'least_disk_usage': least_disk_usage, 
                                                 'most_disk_usage': most_disk_usage, 'least_cpu_temperature': least_cpu_temperature, 
-                                                'most_cpu_temperature': most_cpu_temperature})
+                                                'most_cpu_temperature': most_cpu_temperature, 'host_tags': host_tags})
 
 @login_required(login_url='login')
 def containers(request):
