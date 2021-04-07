@@ -152,10 +152,10 @@ class Alert(models.Model):
         return f"Alert: {self.team.name} alerted about {self.metric.name} on {self.host.guid}"
 
     @classmethod
-    def create(cls, alert_rule=None, report=None, notes=None):
-        assert alert_rule is not None and report is not None and notes is not None
+    def create(cls, alert_rule=None, report=None):
+        assert alert_rule is not None and report is not None
         alert = cls(alert_rule=alert_rule, host_tag=alert_rule.host_tag, team=alert_rule.team, metric=alert_rule.metric, threshold=alert_rule.threshold,
-                    operator=alert_rule.operator, report=report, time=report.time, host=report.host, value=report.value, notes=notes)
+                    operator=alert_rule.operator, report=report, time=report.time, host=report.host, value=report.value)
         return alert
 
     class Meta:
