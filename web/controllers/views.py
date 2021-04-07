@@ -71,6 +71,39 @@ def tag(request, tag_test):
 @login_required(login_url='login')
 def host(request, host_test):
     host = Host.objects.get(guid=host_test)
+
+    ram_labels = []
+    ram_data = []
+    ram_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage')
+    for val in ram_reports:
+        ram_labels.append(val.time)
+    for val_two in ram_reports:
+        ram_data.append(val_two.value)
+
+    cpu_labels = []
+    cpu_data = []
+    cpu_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage')
+    for val in cpu_reports:
+        cpu_labels.append(val.time)
+    for val_two in cpu_reports:
+        cpu_data.append(val_two.value)
+
+    disk_labels = []
+    disk_data = []
+    disk_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage')
+    for val in disk_reports:
+        disk_labels.append(val.time)
+    for val_two in disk_reports:
+        disk_data.append(val_two.value)
+
+    cpu_temp_labels = []
+    cpu_temp_data = []
+    cpu_temp_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature')
+    for val in cpu_temp_reports:
+        cpu_temp_labels.append(val.time)
+    for val_two in cpu_temp_reports:
+        cpu_temp_data.append(val_two.value)
+
     last_four = Report.objects.filter(host__guid=host_test)[:4]
     tags = HostTag.objects.all()
     host_tags = []
@@ -111,7 +144,10 @@ def host(request, host_test):
                                                 'last_timestamp': last_timestamp, 'least_cpu_usage': least_cpu_usage, 
                                                 'most_cpu_usage': most_cpu_usage, 'least_disk_usage': least_disk_usage, 
                                                 'most_disk_usage': most_disk_usage, 'least_cpu_temperature': least_cpu_temperature, 
-                                                'most_cpu_temperature': most_cpu_temperature, 'host_tags': host_tags})
+                                                'most_cpu_temperature': most_cpu_temperature, 'host_tags': host_tags, 
+                                                'ram_labels': ram_labels, 'ram_data': ram_data, 'cpu_labels': cpu_labels, 
+                                                'cpu_data': cpu_data, 'disk_labels': disk_labels, 'disk_data': disk_data, 
+                                                'cpu_temp_labels': cpu_temp_labels, 'cpu_temp_data': cpu_temp_data})
 
 @login_required(login_url='login')
 def containers(request):
