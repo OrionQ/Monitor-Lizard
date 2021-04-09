@@ -37,6 +37,7 @@ def home(request):
     for val in tag_list:
         host_list = val.hosts.count()
 
+    # Pagination for the reports table
     paginator = Paginator(report_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -48,20 +49,28 @@ def home(request):
 def tag(request, tag_test):
     tag = HostTag.objects.get(name=tag_test)
     host_list = tag.hosts.all()
+    # For each host in the tag
     for val in host_list:
         report_list = Report.objects.filter(host=val)
+        # 1. Get the number of reports generated
         report_count = report_list.count()
         last_report = Report.objects.filter(host=val).last()
+        # 2. The timestamp of the last report generated
         if last_report is not None:
             last_timestamp = last_report.time
         else:
-            last_timestamp = "0:00"
+            # Error handling in case there are no reports
+                # currently in the database
+            last_timestamp = "N/A"
 
+        # Getting the last four reports generated
         last_four = Report.objects.filter(host=val)[:4]
-        ram_usage = "None"
-        cpu_usage = "None"
-        disk_usage = "None"
-        cpu_temperature = "None"
+        # Setting the initial values of the metrics
+        ram_usage = "N/A"
+        cpu_usage = "N/A"
+        disk_usage = "N/A"
+        cpu_temperature = "N/A"
+        # 3. Get the last recorded values of the metrics
         for val in last_four:
             if val.metric.name == 'ram_usage':
                 ram_usage = val.value
@@ -79,56 +88,76 @@ def tag(request, tag_test):
 def host(request, host_test):
     host = Host.objects.get(guid=host_test)
 
+    # Labels & data for RAM Usage chart
     ram_labels = []
     ram_data = []
     ram_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage')
     for val in ram_reports:
+        # Labels for RAM usage chart are the timestamps
         ram_labels.append(val.time)
     for val_two in ram_reports:
+        # Values for RAM usage chart are the metric values
         ram_data.append(val_two.value)
 
+    # Labels & data for the CPU Usage chart
     cpu_labels = []
     cpu_data = []
     cpu_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage')
     for val in cpu_reports:
+        # Labels for CPU usage chart are the timestamps
         cpu_labels.append(val.time)
     for val_two in cpu_reports:
+        # Values for CPU usage chart are the metric values
         cpu_data.append(val_two.value)
 
+    # Labels & data for the Disk Usage chart
     disk_labels = []
     disk_data = []
     disk_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage')
     for val in disk_reports:
+        # Labels for Disk usage chart are the timestamps
         disk_labels.append(val.time)
     for val_two in disk_reports:
+        # Labels for Disk usage chart are the metric values
         disk_data.append(val_two.value)
 
+    # Labels & data for the CPU Temperature chart
     cpu_temp_labels = []
     cpu_temp_data = []
     cpu_temp_reports = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature')
     for val in cpu_temp_reports:
+        # Labels for CPU temperature chart are the timestamps
         cpu_temp_labels.append(val.time)
     for val_two in cpu_temp_reports:
+        # Labels for CPU temperature chart are the metric values
         cpu_temp_data.append(val_two.value)
 
     last_four = Report.objects.filter(host__guid=host_test)[:4]
     tags = HostTag.objects.all()
     host_tags = []
+    # For loop to iterate over all of the tags
     for val in tags.all():
+        # For loop to iterate over all the hosts in the tag
         for host_val in val.hosts.all():
+            # Check if the host whose page we're currently on
+                # is present in this tag
             if str(host_val.guid) == host_test:
+                # If it is present, add the tag to the list
+                    # of tags associated with this host
                 host_tags.append(val.name)
 
     last_report = Report.objects.filter(host__guid=host_test).last()
     if last_report is not None:
         last_timestamp = last_report.time
     else:
-        last_timestamp = "0:00"
-
-    ram_usage = "None"
-    cpu_usage = "None"
-    disk_usage = "None"
-    cpu_temperature = "None"
+        last_timestamp = "N/A"
+    
+    # These values are to be used in the large boxes
+        # at the top of the host page
+    ram_usage = "N/A"
+    cpu_usage = "N/A"
+    disk_usage = "N/A"
+    cpu_temperature = "N/A"
     for val in last_four:
         if val.metric.name == 'ram_usage':
             ram_usage = val.value
@@ -144,29 +173,33 @@ def host(request, host_test):
         least_ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').first().value
         most_ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').last().value
     else:
-        least_ram_usage = "0:00"
-        most_ram_usage = "0:00"
+        # Error checking for if there are no reports in the database
+        least_ram_usage = "N/A"
+        most_ram_usage = "N/A"
     # Querysets for Lowest and Highest CPU Usage values
     if Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').first() is not None:
         least_cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').first().value
         most_cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').last().value
     else:
-        least_cpu_usage = "0:00"
-        most_cpu_usage = "0:00"
+        # Error checking for if there are no reports in the database
+        least_cpu_usage = "N/A"
+        most_cpu_usage = "N/A"
     # Querysets for Lowest and Highest Disk Usage values
     if Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').first() is not None:
         least_disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').first().value
         most_disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').last().value
     else:
-        least_disk_usage = "0:00"
-        most_disk_usage = "0:00"
+        # Error checking for if there are no reports in the database
+        least_disk_usage = "N/A"
+        most_disk_usage = "N/A"
     # Querysets for Lowest and Highest CPU Temperature values
     if Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').first() is not None:
         least_cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').first().value
         most_cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').last().value
     else:
-        least_cpu_temperature = "0:00"
-        most_cpu_temperature = "0:00"
+        # Error checking for if there are no reports in the database
+        least_cpu_temperature = "N/A"
+        most_cpu_temperature = "N/A"
 
     return render(request, 'web/host.html', {'host_test': host_test, 'ram_usage': ram_usage, 'cpu_usage': cpu_usage, 
                                                 'disk_usage': disk_usage, 'cpu_temperature': cpu_temperature, 
