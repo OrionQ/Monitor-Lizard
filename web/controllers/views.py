@@ -52,9 +52,16 @@ def tag(request, tag_test):
         report_list = Report.objects.filter(host=val)
         report_count = report_list.count()
         last_report = Report.objects.filter(host=val).last()
-        last_timestamp = last_report.time
+        if last_report is not None:
+            last_timestamp = last_report.time
+        else:
+            last_timestamp = "0:00"
 
         last_four = Report.objects.filter(host=val)[:4]
+        ram_usage = "None"
+        cpu_usage = "None"
+        disk_usage = "None"
+        cpu_temperature = "None"
         for val in last_four:
             if val.metric.name == 'ram_usage':
                 ram_usage = val.value
@@ -113,8 +120,15 @@ def host(request, host_test):
                 host_tags.append(val.name)
 
     last_report = Report.objects.filter(host__guid=host_test).last()
-    last_timestamp = last_report.time
+    if last_report is not None:
+        last_timestamp = last_report.time
+    else:
+        last_timestamp = "0:00"
 
+    ram_usage = "None"
+    cpu_usage = "None"
+    disk_usage = "None"
+    cpu_temperature = "None"
     for val in last_four:
         if val.metric.name == 'ram_usage':
             ram_usage = val.value
@@ -126,17 +140,33 @@ def host(request, host_test):
             cpu_usage = val.value
 
     # Querysets for Lowest and Highest RAM Usage values
-    least_ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').first().value
-    most_ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').last().value
+    if Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').first() is not None:
+        least_ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').first().value
+        most_ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').order_by('value').last().value
+    else:
+        least_ram_usage = "0:00"
+        most_ram_usage = "0:00"
     # Querysets for Lowest and Highest CPU Usage values
-    least_cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').first().value
-    most_cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').last().value
+    if Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').first() is not None:
+        least_cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').first().value
+        most_cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').order_by('value').last().value
+    else:
+        least_cpu_usage = "0:00"
+        most_cpu_usage = "0:00"
     # Querysets for Lowest and Highest Disk Usage values
-    least_disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').first().value
-    most_disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').last().value
+    if Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').first() is not None:
+        least_disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').first().value
+        most_disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').order_by('value').last().value
+    else:
+        least_disk_usage = "0:00"
+        most_disk_usage = "0:00"
     # Querysets for Lowest and Highest CPU Temperature values
-    least_cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').first().value
-    most_cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').last().value
+    if Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').first() is not None:
+        least_cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').first().value
+        most_cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').order_by('value').last().value
+    else:
+        least_cpu_temperature = "0:00"
+        most_cpu_temperature = "0:00"
 
     return render(request, 'web/host.html', {'host_test': host_test, 'ram_usage': ram_usage, 'cpu_usage': cpu_usage, 
                                                 'disk_usage': disk_usage, 'cpu_temperature': cpu_temperature, 
