@@ -13,16 +13,22 @@
 			<h7>Pi Chart</h7>
 		</div>
 	</div>	
-
 	<div class="col-md">
 		<div class="card card-body">
-			<h5>Events Over Time</h5>
+			<h5>Metrics Being Queried</h5>
 			
 		</div>
 		<div class="card card-body">
-			<h7>Chart</h7>
+			<table class="table">
+				{% for metric in metric_names %}
+					<tr>
+					<td>{{ metric }}</td>
+					</tr>
+				{% endfor %}
+			</table>
 		</div>
 	</div>	
+	
 </div>
 
 <br>

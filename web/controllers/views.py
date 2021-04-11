@@ -33,6 +33,10 @@ def logoutUser(request):
 @login_required(login_url='login')
 def home(request):
     report_list = Report.objects.all()
+    metric_names = []
+    for val in report_list:
+        if val.metric.name not in metric_names:
+            metric_names.append(val.metric.name)
     tag_list = HostTag.objects.all()
     for val in tag_list:
         host_list = val.hosts.count()
@@ -43,7 +47,8 @@ def home(request):
     page_obj = paginator.get_page(page_number)
 
     # Returning a template
-    return render(request, 'web/dashboard.html', {'page_obj': page_obj, 'tag_list': tag_list, 'host_list': host_list})
+    return render(request, 'web/dashboard.html', {'page_obj': page_obj, 'tag_list': tag_list, 'host_list': host_list, 
+                        'metric_names': metric_names})
 
 @login_required(login_url='login')
 def tag(request, tag_test):
