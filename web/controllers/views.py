@@ -41,6 +41,19 @@ def home(request):
     for val in tag_list:
         host_list = val.hosts.count()
 
+    alert_list = Alert.objects.all()
+    alert_labels = []
+    alert_data = []
+    alert_dict = {}
+    for val in alert_list:
+        if val.host_tag.name not in alert_dict:
+            alert_dict[val.host_tag.name] = 1
+        else:
+            alert_dict[val.host_tag.name] += 1
+    for key, val in alert_dict.items():
+        alert_labels.append(key)
+        alert_data.append(val)
+
     # Pagination for the reports table
     paginator = Paginator(report_list, 10)
     page_number = request.GET.get('page')
@@ -48,7 +61,7 @@ def home(request):
 
     # Returning a template
     return render(request, 'web/dashboard.html', {'page_obj': page_obj, 'tag_list': tag_list, 'host_list': host_list, 
-                        'metric_names': metric_names})
+                        'metric_names': metric_names, 'alert_labels': alert_labels, 'alert_data': alert_data})
 
 @login_required(login_url='login')
 def tag(request, tag_test):
