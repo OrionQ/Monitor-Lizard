@@ -42,32 +42,39 @@
 			<table class="table">
 				<tr>
 					<th>Time</th>
+					<th>Severity</th>
 					<th>Host</th>
-					<th>Details</th>
+					<th>Tag</th>
+					<th>Metric</th>
+					<th>Threshold</th>
+					<th>Operator</th>
 				</tr>
-				<tr>
-					<td>2/23/2021 12:18PM</td>
-					<td>slac.ncsu.edu</td>
-					<td>Lorem Ipsum</td>
-				</tr>
-				<tr style="background-color:#F0E68C">
-					<td>2/23/2021 12:20PM</td>
-					<td>slac-2.ncsu.edu</td>
-					<td>Active Lorem Ipsum</td>
-				</tr>
-				<tr>
-					<td>2/23/2021 12:22PM</td>
-					<td>slac-2.ncsu.edu</td>
-					<td>Lorem Ipsum</td>
-				</tr>
+				{% for alert in alert_list %}
+					<!--0 is the highest severity an alert can be.-->
+					<!--Want to highlight the table row in red if this is the case.-->
+					{% if alert.alert_rule.severity is 0 %}
+					<tr style="background-color: rgb(248, 149, 149);">
+					{% endif %}
+					<td>{{ alert.time }}</td>
+					<td>{{ alert.alert_rule.severity }}</td>
+					<td>{{ alert.host.guid }}</td>
+					<td>{{ alert.host_tag.name }}</td>
+					<td>{{ alert.metric.name }}</td>
+					<td>{{ alert.threshold }}</td>
+					<td>{{ alert.operator }}</td>
+					</tr>
+				{% endfor %}
 			</table>
 		</div>
 	</div>
+</div>
 
-	<div class="col-md">
+<br>
+
+<div class="row-sm">
+	<div class="col-sm">
 		<div class="card card-body">
 			<h5>Host Tags</h5>
-			
 		</div>
 		<div class="card card-body">
 			<table class="table">
@@ -90,7 +97,6 @@
 <br>
 
 <div class="row">
-
 	<div class="col-md">
 		<div class="card card-body">
 			<h5>Reports</h5>

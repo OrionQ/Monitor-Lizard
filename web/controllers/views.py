@@ -33,17 +33,22 @@ def logoutUser(request):
 @login_required(login_url='login')
 def home(request):
     report_list = Report.objects.all()
+    # To get the list of metrics being queried
     metric_names = []
     for val in report_list:
         if val.metric.name not in metric_names:
             metric_names.append(val.metric.name)
+
     tag_list = HostTag.objects.all()
     for val in tag_list:
+        # To get the number of hosts in the tag
         host_list = val.hosts.count()
 
     alert_list = Alert.objects.all()
     alert_labels = []
     alert_data = []
+    # Key value pairs of tag name : number of alerts
+        # This is used for the alerts by tag chart
     alert_dict = {}
     for val in alert_list:
         if val.host_tag.name not in alert_dict:
@@ -51,7 +56,9 @@ def home(request):
         else:
             alert_dict[val.host_tag.name] += 1
     for key, val in alert_dict.items():
+        # Labels are the tag names
         alert_labels.append(key)
+        # Data is the number of alerts for each tag
         alert_data.append(val)
 
     # Pagination for the reports table
@@ -61,7 +68,8 @@ def home(request):
 
     # Returning a template
     return render(request, 'web/dashboard.html', {'page_obj': page_obj, 'tag_list': tag_list, 'host_list': host_list, 
-                        'metric_names': metric_names, 'alert_labels': alert_labels, 'alert_data': alert_data})
+                        'metric_names': metric_names, 'alert_labels': alert_labels, 'alert_data': alert_data, 
+                        'alert_list': alert_list})
 
 @login_required(login_url='login')
 def tag(request, tag_test):
