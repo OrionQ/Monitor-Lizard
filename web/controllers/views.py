@@ -82,7 +82,7 @@ def tag(request, tag_test):
         # 1. Get the number of reports generated
         report_count = report_list.count()
         last_report = Report.objects.filter(host=val).last()
-        
+
         # 2. The timestamp of the last report generated
         if last_report is not None:
             last_timestamp = last_report.time
@@ -92,20 +92,20 @@ def tag(request, tag_test):
             last_timestamp = "N/A"
 
         # 3. Get the last recorded values of the metrics
-        if Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').last() is not None:
-            ram_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='ram_usage').last().value
+        if Report.objects.filter(host__guid=val.guid).filter(metric__name='ram_usage').last() is not None:
+            ram_usage = Report.objects.filter(host__guid=val.guid).filter(metric__name='ram_usage').last().value
         else:
             ram_usage = "N/A"
-        if Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').last() is not None:
-            disk_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='disk_usage').last().value
+        if Report.objects.filter(host__guid=val.guid).filter(metric__name='disk_usage').last() is not None:
+            disk_usage = Report.objects.filter(host__guid=val.guid).filter(metric__name='disk_usage').last().value
         else:
             disk_usage = "N/A"
-        if Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').last() is not None:
-            cpu_usage = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_usage').last().value
+        if Report.objects.filter(host__guid=val.guid).filter(metric__name='cpu_usage').last() is not None:
+            cpu_usage = Report.objects.filter(host__guid=val.guid).filter(metric__name='cpu_usage').last().value
         else:
             cpu_usage = "N/A"
-        if Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').last() is not None:
-            cpu_temperature = Report.objects.filter(host__guid=host_test).filter(metric__name='cpu_temperature').last().value
+        if Report.objects.filter(host__guid=val.guid).filter(metric__name='cpu_temperature').last() is not None:
+            cpu_temperature = Report.objects.filter(host__guid=val.guid).filter(metric__name='cpu_temperature').last().value
         else:
             cpu_temperature = "N/A"
 
