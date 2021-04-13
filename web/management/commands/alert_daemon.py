@@ -8,11 +8,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        
         # retrieve all the alert rules from the database
         rules = AlertRule.objects.all()
         
-    
         # look through all the tags that follows the alert rule every 1 second
         while True:
             
