@@ -8,6 +8,6 @@ urlpatterns = [
     path('', views.home, name="home"),
     path('tag/<str:tag_test>/', views.tag, name="tag"),
     path('host/<str:host_test>/', views.host, name="host"),
-    path('host/containers/', views.containers),
-    path('host/processes/', views.processes),
+    path('host/<str:host_test>/containers/', views.containers),
+    path('host/<str:host_test>/processes/', views.processes),
 ]
