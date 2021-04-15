@@ -28,13 +28,14 @@ class Host(models.Model):
     """A host that reports to the MonitorLizard system"""
     guid = models.UUIDField()
     tags = models.ManyToManyField('HostTag')
+    name = models.TextField()
 
     def __str__(self):
-        return f"Host: {self.guid}"
+        return f"Host: {self.name} {self.guid}"
 
     class Meta:
         indexes = [
-            models.Index(fields=['guid']),
+            models.Index(fields=['guid', 'name']),
         ]
 
 
