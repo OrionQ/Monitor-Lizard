@@ -22,9 +22,8 @@ def register(request):
             tag = HostTag.objects.get(name='Unsorted')
 
         guid = uuid4()
-        #get IP from POST request
-        name = request.META.get('REMOTE_ADDR') #is this right?
-        tag.hosts.create(guid=guid, name=name)
+        #name = request.META.get('REMOTE_ADDR')
+        tag.hosts.create(guid=guid)
         return JsonResponse({'guid': guid})
     else:
         return HttpResponseNotFound
