@@ -2,10 +2,10 @@
 
 <br />
 
-<div style="position: absolute; left: 31px; top: 95px">
+<div>
     <div class="row">
         <h3>Host: {{ host_test }}</h3>
-        <div class="row btn-group">
+        <div class="btn-group">
             <button
                 type="button"
                 onclick="window.location='containers'"
@@ -38,38 +38,38 @@
     </div>
 </div>
 
-<br />
-<br />
-<br />
-
 {% include 'web/status.html' %}
-
-<br />
 
 <div class="row">
     <div class="col-md">
         <div class="card card-body">
             <table class="table">
-                <tr>
-                    <th>Last Checked</th>
-                    <th>Highest RAM Usage</th>
-                    <th>Lowest RAM Usage</th>
-                    <th>Highest CPU Usage</th>
-                    <th>Lowest CPU Usage</th>
-                    <th>Highest Disk Usage</th>
-                    <th>Lowest Disk Usage</th>
-                    <th>Highest CPU Temperature</th>
-                    <th>Lowest CPU Temperature</th>
-                </tr>
-                <td>{{ last_timestamp }}</td>
-                <td>{{ most_ram_usage }}</td>
-                <td>{{ least_ram_usage }}</td>
-                <td>{{ most_cpu_usage }}</td>
-                <td>{{ least_cpu_usage }}</td>
-                <td>{{ most_disk_usage }}</td>
-                <td>{{ least_disk_usage }}</td>
-                <td>{{ most_cpu_temperature }}</td>
-                <td>{{ least_cpu_temperature }}</td>
+                <thead>
+                    <tr>
+                        <th>Last Checked</th>
+                        <th>Highest RAM Usage</th>
+                        <th>Lowest RAM Usage</th>
+                        <th>Highest CPU Usage</th>
+                        <th>Lowest CPU Usage</th>
+                        <th>Highest Disk Usage</th>
+                        <th>Lowest Disk Usage</th>
+                        <th>Highest CPU Temperature</th>
+                        <th>Lowest CPU Temperature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ last_timestamp }}</td>
+                        <td>{{ most_ram_usage }}</td>
+                        <td>{{ least_ram_usage }}</td>
+                        <td>{{ most_cpu_usage }}</td>
+                        <td>{{ least_cpu_usage }}</td>
+                        <td>{{ most_disk_usage }}</td>
+                        <td>{{ least_disk_usage }}</td>
+                        <td>{{ most_cpu_temperature }}</td>
+                        <td>{{ least_cpu_temperature }}</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>

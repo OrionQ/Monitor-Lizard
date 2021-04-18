@@ -1,43 +1,42 @@
-{% extends 'web/main.html' %}
+{% extends 'web/main.html' %} {% block content %}
 
-{% block content %}
-
-<br>
-<br>
-
-<div style = "position:absolute; left:33px; top:95px;">
-	<div class="row"><h3>Tag: {{ tag_test }}</h3></div>
-</div>
-
-<br>
+<h3 class="mt-3">Tag: {{ tag_test }}</h3>
 
 <div class="row">
-	<div class="col-md">
-		<div class="card card-body">
-			<table class="table">
-				<tr>
-					<th>Host</th>
-					<th>Reports Received</th>
-					<th>Last Checked</th>
-					<th>CPU Usage</th>
-					<th>Disk Usage</th>
-					<th>RAM Usage</th>
-					<th>CPU Temperature</th>
-				</tr>
-				{% for host in host_list %}
-					<tr>
-					<td><a href="{% url 'host' host.guid %}">{{ host.guid }}</a></td>
-					<td>{{ report_count }}</td>
-					<td>{{ last_timestamp }}</td>
-					<td>{{ cpu_usage }}</td>
-					<td>{{ disk_usage }}</td>
-					<td>{{ ram_usage }}</td>
-					<td>{{ cpu_temperature }}</td>
-					</tr>
-				{% endfor %}
-			</table>
-		</div>
-	</div>	
+    <div class="col">
+        <div class="card card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Host</th>
+                        <th>Reports Received</th>
+                        <th>Last Checked</th>
+                        <th>CPU Usage</th>
+                        <th>Disk Usage</th>
+                        <th>RAM Usage</th>
+                        <th>CPU Temperature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for host in host_list %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'host' host.guid %}"
+                                >{{ host.guid }}</a
+                            >
+                        </td>
+                        <td>{{ report_count }}</td>
+                        <td>{{ last_timestamp }}</td>
+                        <td>{{ cpu_usage }}</td>
+                        <td>{{ disk_usage }}</td>
+                        <td>{{ ram_usage }}</td>
+                        <td>{{ cpu_temperature }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
