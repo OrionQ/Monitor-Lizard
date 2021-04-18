@@ -1,0 +1,103 @@
+<!--Chart js-->
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+    integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw="
+    crossorigin="anonymous"
+></script>
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css"
+    integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E="
+    crossorigin="anonymous"
+/>
+<div x-data="chartData()" x-init="init()">
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="metric">Metric</label>
+            <select name="metric" x-model="chartType" @change="chartUpdate">
+                {% for metric in metrics %}
+                <div>
+                    {% if metric.metric_type in chartable_metrics %}
+                    <option value="{{metric.name}}">{{metric.name}}</option>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="endDate">End Date</label>
+            <input
+                type="datetime-local"
+                class="form-control"
+                placeholder="End Date"
+                x-model="endDate"
+                @change="chartUpdate"
+            />
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="count">Count</label>
+            <input
+                type="number"
+                class="form-control"
+                placeholder="Count"
+                x-model="count"
+                @change="chartUpdate"
+            />
+        </div>
+    </form>
+    <canvas id="chart" width="200" height="50"></canvas>
+</div>
+<script>
+    chartData = () => ({
+        endDate: new Date().toISOString().replace('Z', ''),
+        count: 100,
+        chartType: 'cpu_usage',
+        chart: undefined,
+        chartUpdate() {
+            let params = new URLSearchParams('');
+            params.set('end', this.endDate);
+            params.set('count', this.count);
+            fetch('./metrics/' + this.chartType + '/graph?' + params.toString())
+                .then(response => response.json())
+                .then(data => {
+                    this.chart.data.labels = data.labels;
+                    this.chart.data.datasets = [
+                        {
+                            label: this.chartType,
+                            data: data.data,
+                            borderWidth: 1,
+                        },
+                    ];
+                    this.chart.update();
+                });
+        },
+        init() {
+            let ctx = document.getElementById('chart').getContext('2d');
+            this.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '',
+                            data: [],
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                    elements: {
+                        point: {
+                            radius: 0,
+                        },
+                    },
+                },
+            });
+        },
+    });
+</script>

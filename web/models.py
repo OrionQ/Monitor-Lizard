@@ -9,6 +9,8 @@ class Metric(models.Model):
         ('int', 'Integer'),
         ('float', 'Floating point'),
         ('array', 'List'),
+        ('string', 'String'),
+        ('text', 'Text'),
     )
     category = models.TextField()
     name = models.TextField()
@@ -16,7 +18,7 @@ class Metric(models.Model):
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"Metric: {self.category} {self.name} (self.metric_type)"
+        return f"Metric: {self.category} {self.name} ({self.metric_type})"
 
     class Meta:
         indexes = [
@@ -27,7 +29,6 @@ class Metric(models.Model):
 class Host(models.Model):
     """A host that reports to the MonitorLizard system"""
     guid = models.UUIDField()
-    tags = models.ManyToManyField('HostTag')
     #name = models.TextField()
 
     def __str__(self):
@@ -69,6 +70,17 @@ class Report(models.Model):
         indexes = [
             models.Index(fields=['time']),
         ]
+
+
+def get_metric(self, metric=None):
+    assert metric is not None
+    try:
+        return Report.objects.filter(host=self, metric__name=metric).latest('time').value
+    except Report.DoesNotExist:
+        return None
+
+
+Host.get_metric = get_metric
 
 
 class Team(models.Model):

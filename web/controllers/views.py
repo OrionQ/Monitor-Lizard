@@ -168,19 +168,6 @@ def host(request, host_id):
         # Labels for CPU temperature chart are the metric values
         cpu_temp_data.append(val.value)
 
-    tags = HostTag.objects.all()
-    host_tags = []
-    # For loop to iterate over all of the tags
-    for val in tags.all():
-        # For loop to iterate over all the hosts in the tag
-        for host_val in val.hosts.all():
-            # Check if the host whose page we're currently on
-            # is present in this tag
-            if str(host_val.guid) == host_id:
-                # If it is present, add the tag to the list
-                # of tags associated with this host
-                host_tags.append(val.name)
-
     last_report = Report.objects.filter(host__guid=host_id).last()
     if last_report is not None:
         last_timestamp = last_report.time
@@ -188,66 +175,52 @@ def host(request, host_id):
         last_timestamp = "N/A"
 
     # These values are to be used in the large boxes
-        # at the top of the host page
-    if Report.objects.filter(host__guid=host_id, metric__name='ram_usage').last() is not None:
-        ram_usage = Report.objects.filter(host__guid=host_id,
-                                          metric__name='ram_usage').last().value
+    # at the top of the host page
+    ram_usage = host.get_metric('ram_usage')
+    if ram_usage is not None:
+        # Querysets for Lowest and Highest RAM Usage values
+        ram_usage_query = Report.objects.filter(
+            host=host, metric__name='ram_usage').order_by('value')
+        least_ram_usage = ram_usage_query.first().value
+        most_ram_usage = ram_usage_query.last().value
     else:
         ram_usage = "N/A"
-    if Report.objects.filter(host__guid=host_id, metric__name='disk_usage').last() is not None:
-        disk_usage = Report.objects.filter(host__guid=host_id,
-                                           metric__name='disk_usage').last().value
-    else:
-        disk_usage = "N/A"
-    if Report.objects.filter(host__guid=host_id, metric__name='cpu_usage').last() is not None:
-        cpu_usage = Report.objects.filter(host__guid=host_id,
-                                          metric__name='cpu_usage').last().value
-    else:
-        cpu_usage = "N/A"
-    if Report.objects.filter(host__guid=host_id, metric__name='cpu_temperature').last() is not None:
-        cpu_temperature = Report.objects.filter(host__guid=host_id,
-                                                metric__name='cpu_temperature').last().value
-    else:
-        cpu_temperature = "N/A"
-
-    # Querysets for Lowest and Highest RAM Usage values
-    if Report.objects.filter(host__guid=host_id, metric__name='ram_usage').order_by('value').first() is not None:
-        least_ram_usage = Report.objects.filter(host__guid=host_id,
-                                                metric__name='ram_usage').order_by('value').first().value
-        most_ram_usage = Report.objects.filter(host__guid=host_id,
-                                               metric__name='ram_usage').order_by('value').last().value
-    else:
-        # Error checking for if there are no reports in the database
         least_ram_usage = "N/A"
         most_ram_usage = "N/A"
-    # Querysets for Lowest and Highest CPU Usage values
-    if Report.objects.filter(host__guid=host_id, metric__name='cpu_usage').order_by('value').first() is not None:
-        least_cpu_usage = Report.objects.filter(host__guid=host_id,
-                                                metric__name='cpu_usage').order_by('value').first().value
-        most_cpu_usage = Report.objects.filter(host__guid=host_id,
-                                               metric__name='cpu_usage').order_by('value').last().value
+
+    disk_usage = host.get_metric('disk_usage')
+    if disk_usage is not None:
+        # Querysets for Lowest and Highest Disk Usage values
+        disk_usage_query = Report.objects.filter(
+            host=host, metric__name='disk_usage').order_by('value')
+        least_disk_usage = disk_usage_query.first().value
+        most_disk_usage = disk_usage_query.last().value
     else:
-        # Error checking for if there are no reports in the database
-        least_cpu_usage = "N/A"
-        most_cpu_usage = "N/A"
-    # Querysets for Lowest and Highest Disk Usage values
-    if Report.objects.filter(host__guid=host_id, metric__name='disk_usage').order_by('value').first() is not None:
-        least_disk_usage = Report.objects.filter(host__guid=host_id,
-                                                 metric__name='disk_usage').order_by('value').first().value
-        most_disk_usage = Report.objects.filter(host__guid=host_id,
-                                                metric__name='disk_usage').order_by('value').last().value
-    else:
-        # Error checking for if there are no reports in the database
+        disk_usage = "N/A"
         least_disk_usage = "N/A"
         most_disk_usage = "N/A"
-    # Querysets for Lowest and Highest CPU Temperature values
-    if Report.objects.filter(host__guid=host_id, metric__name='cpu_temperature').order_by('value').first() is not None:
-        least_cpu_temperature = Report.objects.filter(host__guid=host_id,
-                                                      metric__name='cpu_temperature').order_by('value').first().value
-        most_cpu_temperature = Report.objects.filter(host__guid=host_id,
-                                                     metric__name='cpu_temperature').order_by('value').last().value
+
+    cpu_usage = host.get_metric('cpu_usage')
+    if cpu_usage is not None:
+        # Querysets for Lowest and Highest CPU Usage values
+        cpu_usage_query = Report.objects.filter(
+            host=host, metric__name='cpu_usage').order_by('value')
+        least_cpu_usage = cpu_usage_query.first().value
+        most_cpu_usage = cpu_usage_query.last().value
     else:
-        # Error checking for if there are no reports in the database
+        cpu_usage = "N/A"
+        least_cpu_usage = "N/A"
+        most_cpu_usage = "N/A"
+
+    cpu_temperature = host.get_metric('cpu_temperature')
+    if cpu_temperature is not None:
+        # Querysets for Lowest and Highest CPU Temperature values
+        cpu_temperature_query = Report.objects.filter(
+            host=host, metric__name='cpu_temperature').order_by('value')
+        least_cpu_temperature = cpu_temperature_query.first().value
+        most_cpu_temperature = cpu_temperature_query.last().value
+    else:
+        cpu_temperature = "N/A"
         least_cpu_temperature = "N/A"
         most_cpu_temperature = "N/A"
 
@@ -259,10 +232,10 @@ def host(request, host_id):
                    'last_timestamp': last_timestamp, 'least_cpu_usage': least_cpu_usage,
                    'most_cpu_usage': most_cpu_usage, 'least_disk_usage': least_disk_usage,
                    'most_disk_usage': most_disk_usage, 'least_cpu_temperature': least_cpu_temperature,
-                   'most_cpu_temperature': most_cpu_temperature, 'host_tags': host_tags,
+                   'most_cpu_temperature': most_cpu_temperature, 'host_tags': HostTag.objects.filter(hosts=host),
                    'ram_labels': ram_labels, 'ram_data': ram_data, 'cpu_labels': cpu_labels,
                    'cpu_data': cpu_data, 'disk_labels': disk_labels, 'disk_data': disk_data,
-                   'cpu_temp_labels': cpu_temp_labels, 'cpu_temp_data': cpu_temp_data})
+                   'cpu_temp_labels': cpu_temp_labels, 'cpu_temp_data': cpu_temp_data, 'metrics': Metric.objects.all(), 'chartable_metrics': ['Integer', 'Floating point']})
 
 
 @login_required(login_url='login')

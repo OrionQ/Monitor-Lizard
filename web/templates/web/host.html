@@ -1,69 +1,80 @@
-{% extends 'web/main.html' %}
+{% extends 'web/main.html' %} {% block content %}
 
-{% block content %}
+<br />
 
-<br>
-
-<div style = "position:absolute; left:31px; top:95px;">
-	<div class="row">
-		<h3>Host: {{ host_test }}</h3>
-		<div class="row btn-group">
-			<button type="button" onclick="window.location='containers'" class="col-md-5 btn btn-secondary btn-md" style="margin-top: 6px; margin-left: 28px;">Containers</button>
-			<button type="button" onclick="window.location='processes'" class="col-md-5 btn btn-secondary btn-md" style="margin-top: 6px; margin-left: 13px;">Processes</button>
-		</div>
-	</div>
-	<div class="row">
-		{% for tag in host_tags %}
-			<h5><a href="{% url 'tag' tag %}" class="badge badge-info badge-pill" style="margin-top: 12px; opacity: .7;">{{ tag }}</a></h5>
-		{% endfor %}
-	</div>
+<div style="position: absolute; left: 31px; top: 95px">
+    <div class="row">
+        <h3>Host: {{ host_test }}</h3>
+        <div class="row btn-group">
+            <button
+                type="button"
+                onclick="window.location='containers'"
+                class="col-md-5 btn btn-secondary btn-md"
+                style="margin-top: 6px; margin-left: 28px"
+            >
+                Containers
+            </button>
+            <button
+                type="button"
+                onclick="window.location='processes'"
+                class="col-md-5 btn btn-secondary btn-md"
+                style="margin-top: 6px; margin-left: 13px"
+            >
+                Processes
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        {% for tag in host_tags %}
+        <h5>
+            <a
+                href="{% url 'tag' tag %}"
+                class="badge badge-info badge-pill"
+                style="margin-top: 12px; opacity: 0.7"
+                >{{ tag }}</a
+            >
+        </h5>
+        {% endfor %}
+    </div>
 </div>
 
-<br>
-<br>
-<br>
+<br />
+<br />
+<br />
 
 {% include 'web/status.html' %}
 
-<br>
+<br />
 
 <div class="row">
-	<div class="col-md">
-		<div class="card card-body">
-			<table class="table">
-				<tr>
-					<th>Last Checked</th>
-					<th>Highest RAM Usage</th>
-					<th>Lowest RAM Usage</th>
-					<th>Highest CPU Usage</th>
-					<th>Lowest CPU Usage</th>
-					<th>Highest Disk Usage</th>
-					<th>Lowest Disk Usage</th>
-					<th>Highest CPU Temperature</th>
-					<th>Lowest CPU Temperature</th>
-				</tr>
-					<td>{{ last_timestamp }}</td>
-					<td>{{ most_ram_usage }}</td>
-					<td>{{ least_ram_usage }}</td>
-					<td>{{ most_cpu_usage }}</td>
-					<td>{{ least_cpu_usage }}</td>
-					<td>{{ most_disk_usage }}</td>
-					<td>{{ least_disk_usage }}</td>
-					<td>{{ most_cpu_temperature }}</td>
-					<td>{{ least_cpu_temperature }}</td>
-			</table>
-		</div>
-	</div>	
+    <div class="col-md">
+        <div class="card card-body">
+            <table class="table">
+                <tr>
+                    <th>Last Checked</th>
+                    <th>Highest RAM Usage</th>
+                    <th>Lowest RAM Usage</th>
+                    <th>Highest CPU Usage</th>
+                    <th>Lowest CPU Usage</th>
+                    <th>Highest Disk Usage</th>
+                    <th>Lowest Disk Usage</th>
+                    <th>Highest CPU Temperature</th>
+                    <th>Lowest CPU Temperature</th>
+                </tr>
+                <td>{{ last_timestamp }}</td>
+                <td>{{ most_ram_usage }}</td>
+                <td>{{ least_ram_usage }}</td>
+                <td>{{ most_cpu_usage }}</td>
+                <td>{{ least_cpu_usage }}</td>
+                <td>{{ most_disk_usage }}</td>
+                <td>{{ least_disk_usage }}</td>
+                <td>{{ most_cpu_temperature }}</td>
+                <td>{{ least_cpu_temperature }}</td>
+            </table>
+        </div>
+    </div>
 </div>
 
-<br>
+<br />
 
-{% include 'web/ramUsageChart.html' %}
-<br>
-{% include 'web/diskUsageChart.html' %}
-<br>
-{% include 'web/cpuUsageChart.html' %}
-<br>
-{% include 'web/cpuTempChart.html' %}
-
-{% endblock %}
+{% include 'web/metric_chart.html' %} {% endblock %}

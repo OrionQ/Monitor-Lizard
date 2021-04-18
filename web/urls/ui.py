@@ -1,6 +1,6 @@
 from django.urls import path
 
-from web.controllers import views, host_endpoints
+from web.controllers import views, host_endpoints, graph
 
 urlpatterns = [
     path('login/', views.loginPage, name="login"),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('host/<str:host_id>/', views.host, name="host"),
     path('host/<str:host_id>/containers/', views.containers),
     path('host/<str:host_id>/processes/', views.processes),
+    path('host/<str:host_id>/metrics/<str:metric_name>/graph', graph.host_metric),
 ]
