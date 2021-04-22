@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.mail import send_mail
 
 # Models for the MonitorLizard web application
 
@@ -156,6 +157,13 @@ class Alert(models.Model):
         assert alert_rule is not None and report is not None
         alert = cls(alert_rule=alert_rule, host_tag=alert_rule.host_tag, team=alert_rule.team, metric=alert_rule.metric, threshold=alert_rule.threshold,
                     operator=alert_rule.operator, report=report, time=report.time, host=report.host, value=report.value)
+        send_mail(
+            'Test',
+            'This is a test.',
+            'xqin3@ncsu.edu',
+            ['xiaolei_qin@outlook.com'],
+            fail_silently=False
+        )
         return alert
 
     class Meta:
