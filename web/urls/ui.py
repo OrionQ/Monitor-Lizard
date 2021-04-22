@@ -1,13 +1,14 @@
 from django.urls import path
 
-from web.controllers import views, host_endpoints
+from web.controllers import views, host_endpoints, graph
 
 urlpatterns = [
     path('login/', views.loginPage, name="login"),
     path('logout/', views.logoutUser, name="logout"),
     path('', views.home, name="home"),
-    path('tag/<str:tag_test>/', views.tag, name="tag"),
-    path('host/<str:host_test>/', views.host, name="host"),
-    path('host/<str:host_test>/containers/', views.containers),
-    path('host/<str:host_test>/processes/', views.processes),
+    path('tag/<str:tag_id>/', views.tag, name="tag"),
+    path('host/<str:host_id>/', views.host, name="host"),
+    path('host/<str:host_id>/containers/', views.containers),
+    path('host/<str:host_id>/processes/', views.processes),
+    path('host/<str:host_id>/metrics/<str:metric_name>/graph', graph.host_metric),
 ]
