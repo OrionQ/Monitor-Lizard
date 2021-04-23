@@ -170,11 +170,14 @@ class Alert(models.Model):
         assert alert_rule is not None and report is not None
         alert = cls(alert_rule=alert_rule, host_tag=alert_rule.host_tag, team=alert_rule.team, metric=alert_rule.metric, threshold=alert_rule.threshold,
                     operator=alert_rule.operator, report=report, time=report.time, host=report.host, value=report.value)
+        message = 'This is an alert from the Monitor Lizard.'
+        recipient_list = alert_rule.team.users.all().values_list('notification_email', flat=True)
+        
         send_mail(
-            'Test',
-            'This is a test.',
-            'xqin3@ncsu.edu',
-            ['xiaolei_qin@outlook.com'],
+            subject='Monitor Lizard Alert',
+            message=message,
+            from_email=None,
+            recipient_list=recipient_list,
             fail_silently=False
         )
         return alert
