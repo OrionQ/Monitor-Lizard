@@ -6,4 +6,4 @@ __pycache__
 .DS_Store
 host_plugin_config.ini
 monitor_lizard_guid.txt
-/settings/components/email.py
+MonitorLizard/settings/components/email.py
