@@ -178,7 +178,7 @@ class Alert(models.Model):
             message=message,
             from_email=None,
             recipient_list=recipient_list,
-            fail_silently=False
+            fail_silently=True
         )
         return alert
 
