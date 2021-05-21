@@ -1,0 +1,9 @@
+*.log
+*.pot
+*.pyc
+__pycache__
+*.sqlite3
+.DS_Store
+host_plugin_config.ini
+monitor_lizard_guid.txt
+MonitorLizard/settings/components/email.py
